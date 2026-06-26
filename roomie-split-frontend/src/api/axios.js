@@ -1,0 +1,39 @@
+import axios from "axios";
+
+const api = axios.create({
+    baseURL: import.meta.env.VITE_API_URL,
+});
+
+api.interceptors.request.use((config) => {
+
+    // const token = localStorage.getItem("accessToken");
+
+    // if (token) {
+    //     config.headers.Authorization = `Bearer ${token}`;
+    // }
+
+    // return config;
+
+    const token = localStorage.getItem("accessToken");
+
+    const publicUrls = [
+        "/auth/login",
+        "/auth/register",
+        "/auth/refresh"
+    ];
+
+    const isPublic =
+        publicUrls.some(url =>
+            config.url?.includes(url)
+        );
+
+    if (token && !isPublic) {
+        config.headers.Authorization =
+            `Bearer ${token}`;
+    }
+
+    console.log(import.meta.env.VITE_API_URL);
+    return config;
+});
+
+export default api;
